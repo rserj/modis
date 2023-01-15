@@ -22,12 +22,12 @@ public class TwitterStreamWorker: ITwitterStreamWorker
     {
         _twitterClient = twitterClient;
         _memoryCache = memoryCache;
-        this._logger = logger;
+        _logger = logger;
     }
 
     public async void WatchTwitterStream(CancellationToken cts)
     {
-        ulong tweetCount = 0;
+        int tweetCount = 0;
         await foreach (var tweet in this._twitterClient.GetTweetStream(cts))
         {
             tweetCount++;
@@ -50,7 +50,7 @@ public class TwitterStreamWorker: ITwitterStreamWorker
         }
     }
 
-    protected virtual void Print(ulong twitCount, IEnumerable<string> topHashes)
+    protected virtual void Print(int twitCount, IEnumerable<string> topHashes)
     {
         this._logger.LogInformation("total twits: {count}", twitCount);
         this._logger.LogInformation("top #10: {top}", string.Join(',',topHashes));

@@ -9,14 +9,14 @@ using Modis.TwitterClient.Abstractions;
 
 public class TwitterStreamWorkerMock : TwitterStreamWorker
 {
-    public List<(ulong count, List<string> topHashTags)> PrintData { get; } = new();
+    public List<(int count, List<string> topHashTags)> PrintData { get; } = new();
 
     public TwitterStreamWorkerMock(ITwitterClient twitterClient, IMemoryCache memoryCache)
         : base(twitterClient, memoryCache, new NullLogger<TwitterStreamWorker>())
     {
     }
 
-    protected override void Print(ulong twitCount, IEnumerable<string> topHashes)
+    protected override void Print(int twitCount, IEnumerable<string> topHashes)
     {
         PrintData.Add((twitCount, topHashes.ToList()));
     }

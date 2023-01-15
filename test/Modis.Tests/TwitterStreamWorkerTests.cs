@@ -16,7 +16,7 @@ public class TwitterStreamWorkerTests
         streamWorkerMock.WatchTwitterStream(CancellationToken.None);
         streamWorkerMock
             .PrintData
-            .First(tags => tags.count == (ulong)MockData.Tweets.Length)
+            .First(tags => tags.count == MockData.Tweets.Length)
             .topHashTags
             .Should()
             .Contain(MockData.Top10Tags, "should contain 10 most frequent tags");
