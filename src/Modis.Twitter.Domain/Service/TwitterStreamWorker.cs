@@ -50,7 +50,7 @@ public class TwitterStreamWorker: ITwitterStreamWorker
         }
     }
 
-    public virtual void Print(ulong twitCount, IEnumerable<string> topHashes)
+    protected virtual void Print(ulong twitCount, IEnumerable<string> topHashes)
     {
         this._logger.LogInformation("total twits: {count}", twitCount);
         this._logger.LogInformation("top #10: {top}", string.Join(',',topHashes));
