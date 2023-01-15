@@ -1,44 +1,57 @@
-﻿namespace Modis.TwitterClient
+﻿namespace Modis.TwitterClient;
+
+using System.Runtime.CompilerServices;
+
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+
+using Modis.TwitterClient.Abstractions;
+using Modis.TwitterClient.Abstractions.Model;
+using Newtonsoft.Json.Linq;
+using ITwitterClient = Modis.TwitterClient.Abstractions.ITwitterClient;
+
+internal class TwitterClient : ITwitterClient
 {
-    using System.Runtime.CompilerServices;
+    private const string HttpAuthorizationHeaderName = "Authorization";
+    private readonly IOptions<TwitterSettings> _options;
+    private readonly ILogger<TwitterClient> _logger;
 
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Options;
-
-    using Modis.TwitterClient.Abstractions;
-    using Modis.TwitterClient.Abstractions.Model;
-    using Newtonsoft.Json.Linq;
-    using ITwitterClient = Modis.TwitterClient.Abstractions.ITwitterClient;
-
-    internal class TwitterClient : ITwitterClient
+    public TwitterClient(IOptions<TwitterSettings> options, ILogger<TwitterClient> logger)
     {
-        private const string HttpAuthorizationHeaderName = "Authorization";
-        private readonly IOptions<TwitterSettings> _options;
-        private readonly ILogger<TwitterClient> _logger;
+        this._options = options;
+        this._logger = logger;
+    }
 
-        public TwitterClient(IOptions<TwitterSettings> options, ILogger<TwitterClient> logger)
+    public async IAsyncEnumerable<Tweet> GetTweetStream([EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        HttpClient httpClient = new HttpClient();
+        httpClient.DefaultRequestHeaders.Add(HttpAuthorizationHeaderName, new[] { $"Bearer {this._options.Value.BearToken}" });
+
+        Stream stream = null;
+        try
         {
-            this._options = options;
-            this._logger = logger;
+            stream = await httpClient.GetStreamAsync(this._options.Value.StreamUrl, cancellationToken);
+        }
+        catch (HttpRequestException e)
+        {
+            this._logger.LogError(e,"Error during requesting url {url}", _options.Value.StreamUrl);
         }
 
-        public async IAsyncEnumerable<Tweet> GetTweetStream([EnumeratorCancellation] CancellationToken cancellationToken = default)
+        if (stream == null)
         {
-            HttpClient httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Add(HttpAuthorizationHeaderName, new[] { $"Bearer {this._options.Value.BearToken}" });
+            yield break;
+        }
 
-            var streamResp = await httpClient.GetStreamAsync(this._options.Value.StreamUrl, cancellationToken);
-            using (var reader = new StreamReader(streamResp))
+        using (var reader = new StreamReader(stream))
+        {
+            while (!reader.EndOfStream)
             {
-                while (!reader.EndOfStream)
+                if (cancellationToken.IsCancellationRequested) yield break;
+                var tweetJson = await reader.ReadLineAsync();
+                if (!string.IsNullOrEmpty(tweetJson))
                 {
-                    if (cancellationToken.IsCancellationRequested) break;
-                    var tweetJson = await reader.ReadLineAsync();
-                    if (!string.IsNullOrEmpty(tweetJson))
-                    {
-                        JToken jTweet = JToken.Parse(tweetJson);
-                        yield return jTweet["data"]!.ToObject<Tweet>()!;
-                    }
+                    JToken jTweet = JToken.Parse(tweetJson);
+                    yield return jTweet["data"]!.ToObject<Tweet>()!;
                 }
             }
         }

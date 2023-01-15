@@ -1,7 +1,5 @@
-﻿namespace Modis.Twitter.Domain.Abstractions
+﻿namespace Modis.Twitter.Domain.Abstractions;
+public interface ITwitterStreamWorker
 {
-    public interface ITwitterStreamWorker
-    {
-        void WatchTwitterStream(CancellationToken cts);
-    }
+    void WatchTwitterStream(CancellationToken cts);
 }
