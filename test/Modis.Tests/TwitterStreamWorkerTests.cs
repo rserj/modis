@@ -1,82 +1,39 @@
-namespace Modis.Tests
+namespace Modis.Tests;
+
+using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
+using Modis.Tests.Mocks;
+using Modis.TwitterClient.Abstractions;
+using Moq;
+
+// Not ready yet
+public class TwitterStreamWorkerTests
 {
-    using FluentAssertions;
-
-    using Microsoft.Extensions.Caching.Memory;
-    using Microsoft.Extensions.DependencyInjection;
-
-    using Modis.Tests.Mocks;
-    using Modis.TwitterClient.Abstractions;
-    using Modis.TwitterClient.Abstractions.Model;
-
-    using Moq;
-
-    // Not ready yet
-    public class TwitterStreamWorkerTests
+    [Fact]
+    public void WatchTwitterStream_SimulateStream_ExpectValid_Top10HashTags_TotalTweetsCount()
     {
-        /// <summary>
-        /// The Mock data.
-        /// #movie - 11, #avatar - 6, #sky - 4, #newyear - 6, #tea - 8
-        /// #topPop - 2, #saveWater - 1, #electro - 3, #anime - 2, #rain - 4, #snp500 - 1, #air - 3, #android - 3, #xamarintvos - 3
-        /// </summary>
-        private Tweet[] _mockData = {
-                                        new Tweet { Id = "1", Text = "testing #avatar #movie" },
-                                        new Tweet { Id = "2", Text = "bad weather #rain" },
-                                        new Tweet { Id = "3", Text = "watch #avatar #movie" },
-                                        new Tweet { Id = "4", Text = "market #snp500 #sky #movie" },
-                                        new Tweet { Id = "5", Text = "testing #avatar #movie #android" },
-                                        new Tweet { Id = "6", Text = "Lorem ipsum dolor sit amet, #music2023 #tea #tea" },
-                                        new Tweet { Id = "7", Text = "testing #avatar #movie" },
-                                        new Tweet { Id = "8", Text = "Lorem ipsum dolor sit amet, #movie #tea #air session" },
-                                        new Tweet { Id = "9", Text = "testing #avatar #movie" },
-                                        new Tweet { Id = "10", Text = "Lorem ipsum dolor sit amet, #newyear #tea #tea" },
-                                        new Tweet { Id = "11", Text = "Lorem ipsum dolor sit amet, #topPop #movie #xamarintvos" },
-                                        new Tweet { Id = "12", Text = "Lorem ipsum dolor sit amet, #rain #saveWater" },
-                                        new Tweet { Id = "13", Text = "Lorem ipsum dolor sit amet, #anime #sky #movie #android" },
-                                        new Tweet { Id = "14", Text = "Lorem ipsum dolor sit amet, testing #tea #avatar #movie" },
-                                        new Tweet { Id = "15", Text = "Lorem ipsum dolor sit amet, #newyear #air #xamarintvos" },
-                                        new Tweet { Id = "16", Text = "Lorem ipsum dolor sit amet, #sky #sky #rain   #android" },
-                                        new Tweet { Id = "17", Text = "Lorem ipsum dolor sit amet, #coffee #electro" },
-                                        new Tweet { Id = "18", Text = "Lorem ipsum dolor sit amet, #electro #newyear #newyear" },
-                                        new Tweet { Id = "19", Text = "Lorem ipsum dolor sit amet, #topPop" },
-                                        new Tweet { Id = "20", Text = "Lorem ipsum dolor sit amet, #newyear #xamarintvos" },
-                                        new Tweet { Id = "21", Text = "Lorem ipsum dolor sit amet, #anime #tea" },
-                                        new Tweet { Id = "22", Text = "Lorem ipsum dolor sit amet, #electro #tea" },
-                                        new Tweet { Id = "23", Text = "Lorem ipsum dolor sit amet, #newyear #rain" },
-                                        new Tweet { Id = "24", Text = "Lorem ipsum dolor sit amet, #air " },
-                                    };
-
-        private string[] _top10Tags = {
-                                           "#movie", "#avatar", "#sky", "#newyear", "#tea", "#rain", "#xamarintvos",
-                                           "#android", "#air", "#electro"
-                                      };
-
-        [Fact]
-        public void Valid_TwitterCount()
-        {
-            var streamWorkerMock = this.GetSystemUnderTest().GetRequiredService<TwitterStreamWorkerMock>();
-            streamWorkerMock.WatchTwitterStream(CancellationToken.None);
-            streamWorkerMock
-                .PrintData
-                .First(tags => tags.count == (ulong)this._mockData.Length)
-                .topHashTags
-                .Should()
-                .Contain(_top10Tags, "should contain 10 most frequent tags");
-        }
+        var streamWorkerMock = this.GetSystemUnderTest().GetRequiredService<TwitterStreamWorkerMock>();
+        streamWorkerMock.WatchTwitterStream(CancellationToken.None);
+        streamWorkerMock
+            .PrintData
+            .First(tags => tags.count == (ulong)MockData.Tweets.Length)
+            .topHashTags
+            .Should()
+            .Contain(MockData.Top10Tags, "should contain 10 most frequent tags");
+    }
 
 
-        public ServiceProvider GetSystemUnderTest()
-        {
-            var twitterClientMock = new Mock<ITwitterClient>(MockBehavior.Strict);
-            twitterClientMock.Setup(client => client.GetTweetStream(It.IsAny<CancellationToken>())).Returns(() => this._mockData.ToAsyncEnumerable());
+    private ServiceProvider GetSystemUnderTest()
+    {
+        var twitterClientMock = new Mock<ITwitterClient>(MockBehavior.Strict);
+        twitterClientMock.Setup(client => client.GetTweetStream(It.IsAny<CancellationToken>())).Returns(() => MockData.Tweets.ToAsyncEnumerable());
 
-            var services = new ServiceCollection();
-            services
-                .AddLogging()
-                .AddMemoryCache()
-                .AddTransient(provider => twitterClientMock.Object)
-                .AddTransient<TwitterStreamWorkerMock>();
-            return services.BuildServiceProvider();
-        }
+        var services = new ServiceCollection();
+        services
+            .AddLogging()
+            .AddMemoryCache()
+            .AddTransient(provider => twitterClientMock.Object)
+            .AddTransient<TwitterStreamWorkerMock>();
+        return services.BuildServiceProvider();
     }
 }

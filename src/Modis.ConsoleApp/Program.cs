@@ -22,7 +22,7 @@ public class Program
 
     static IHostBuilder CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)
-            .ConfigureAppConfiguration((hostingContext, configuration) =>
+            .ConfigureAppConfiguration((ctx, configuration) =>
                 {
                     configuration.Sources.Clear();
                     configuration
@@ -36,7 +36,7 @@ public class Program
                         .AddTwitterClient(builder.Configuration)
                         .AddTwitterDomainServices();
                 })
-            .ConfigureLogging((_, logging) =>
+            .ConfigureLogging((ctx, logging) =>
                 {
                     logging.ClearProviders();
                     logging.AddSimpleConsole(options =>
