@@ -2,7 +2,7 @@
 
 using System.Text.RegularExpressions;
 
-internal static class HashTagParser
+public static class HashTagParser
 {
     /// <summary>
     /// Compiled regex, for matching #tags in a tweet

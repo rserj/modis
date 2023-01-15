@@ -46,11 +46,10 @@ namespace Modis.Tests
                                         new Tweet { Id = "24", Text = "Lorem ipsum dolor sit amet, #air " },
                                     };
 
-        private string[] _top10Tags = new[]
-                                          {
-                                              "#movie", "#avatar", "#sky", "#newyear", "#tea", "#rain", "#xamarintvos",
-                                              "#android", "#air", "#electro"
-                                          };
+        private string[] _top10Tags = {
+                                           "#movie", "#avatar", "#sky", "#newyear", "#tea", "#rain", "#xamarintvos",
+                                           "#android", "#air", "#electro"
+                                      };
 
         [Fact]
         public void Valid_TwitterCount()
@@ -75,7 +74,7 @@ namespace Modis.Tests
             services
                 .AddLogging()
                 .AddMemoryCache()
-                .AddTransient<ITwitterClient>(provider => twitterClientMock.Object)
+                .AddTransient(provider => twitterClientMock.Object)
                 .AddTransient<TwitterStreamWorkerMock>();
             return services.BuildServiceProvider();
         }
