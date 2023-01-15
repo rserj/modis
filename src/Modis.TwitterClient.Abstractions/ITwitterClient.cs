@@ -4,6 +4,6 @@
 
     public interface ITwitterClient
     {
-        IAsyncEnumerable<Twit> GetTweetStream(CancellationToken cancellationToken = default);
+        IAsyncEnumerable<Tweet> GetTweetStream(CancellationToken cancellationToken = default);
     }
 }

@@ -9,6 +9,6 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddTwitterDomainServices(this IServiceCollection services)
     {
-        return services.AddTransient<ITwitterStreamWorker, TwitterStreamWorker>().AddTransient<HashTagCounter>();
+        return services.AddTransient<ITwitterStreamWorker, TwitterStreamWorker>();
     }
 }

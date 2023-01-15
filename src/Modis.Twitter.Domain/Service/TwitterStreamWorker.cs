@@ -6,21 +6,21 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
 using Modis.Twitter.Domain.Abstractions;
+using Modis.Twitter.Domain.Utils;
 using Modis.TwitterClient.Abstractions;
 
 public class TwitterStreamWorker: ITwitterStreamWorker
 {
     private const int TrackMaxTags = 10;
+
     private readonly ITwitterClient _twitterClient;
-    private readonly HashTagCounter _hashTagCounter;
     private IMemoryCache _memoryCache;
     private readonly ILogger<TwitterStreamWorker> _logger;
     private ConcurrentDictionary<string, int> _map = new();
 
-    public TwitterStreamWorker(ITwitterClient twitterClient, HashTagCounter hashTagCounter, IMemoryCache memoryCache, ILogger<TwitterStreamWorker> logger)
+    public TwitterStreamWorker(ITwitterClient twitterClient, IMemoryCache memoryCache, ILogger<TwitterStreamWorker> logger)
     {
         _twitterClient = twitterClient;
-        _hashTagCounter = hashTagCounter;
         _memoryCache = memoryCache;
         this._logger = logger;
     }
@@ -31,7 +31,7 @@ public class TwitterStreamWorker: ITwitterStreamWorker
         await foreach (var tweet in this._twitterClient.GetTweetStream(cts))
         {
             tweetCount++;
-            var tags = _hashTagCounter.Count(tweet.Text);
+            var tags = HashTagParser.GetTweetTags(tweet.Text);
             foreach (var tag in tags)
             {
                 // keep track of #tag count

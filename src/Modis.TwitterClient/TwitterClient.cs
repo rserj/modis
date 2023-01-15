@@ -22,7 +22,7 @@
             this._logger = logger;
         }
 
-        public async IAsyncEnumerable<Twit> GetTweetStream([EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<Tweet> GetTweetStream([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             HttpClient httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Add(HttpAuthorizationHeaderName, new[] { $"Bearer {this._options.Value.BearToken}" });
@@ -37,7 +37,7 @@
                     if (!string.IsNullOrEmpty(tweetJson))
                     {
                         JToken jTweet = JToken.Parse(tweetJson);
-                        yield return jTweet["data"]!.ToObject<Twit>()!;
+                        yield return jTweet["data"]!.ToObject<Tweet>()!;
                     }
                 }
             }
