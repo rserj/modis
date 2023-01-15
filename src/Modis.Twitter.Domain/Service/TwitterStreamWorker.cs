@@ -16,7 +16,7 @@ public class TwitterStreamWorker: ITwitterStreamWorker
     private readonly ITwitterClient _twitterClient;
     private IMemoryCache _memoryCache;
     private readonly ILogger<TwitterStreamWorker> _logger;
-    private ConcurrentDictionary<string, int> _map = new();
+    private Dictionary<string, int> _map = new();
 
     public TwitterStreamWorker(ITwitterClient twitterClient, IMemoryCache memoryCache, ILogger<TwitterStreamWorker> logger)
     {
@@ -38,12 +38,12 @@ public class TwitterStreamWorker: ITwitterStreamWorker
                 _memoryCache.TryGetValue(tag, out int tagCount);
                 this._memoryCache.Set(tag, ++tagCount);
 
-                // tracking uniq tag
+                // tracking unique tag count
                 _map[tag] = tagCount;
 
-                // maintaining top #10 items
+                // maintaining top 10 #tags
                 if (this._map.Count > TrackMaxTags)
-                    _map.TryRemove(this._map.MinBy(pair => pair.Value));
+                    _map.Remove(this._map.MinBy(pair => pair.Value).Key);
 
                 Print(tweetCount, _map.Keys);
             }

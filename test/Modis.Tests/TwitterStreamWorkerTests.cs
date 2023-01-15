@@ -1,5 +1,7 @@
 namespace Modis.Tests
 {
+    using FluentAssertions;
+
     using Microsoft.Extensions.Caching.Memory;
     using Microsoft.Extensions.DependencyInjection;
 
@@ -14,41 +16,53 @@ namespace Modis.Tests
     {
         /// <summary>
         /// The Mock data.
-        /// #3d - 10, #avatar - 6, #sky - 4, #newyear - 6, #tea - 8
+        /// #movie - 11, #avatar - 6, #sky - 4, #newyear - 6, #tea - 8
         /// #topPop - 2, #saveWater - 1, #electro - 3, #anime - 2, #rain - 4, #snp500 - 1, #air - 3, #android - 3, #xamarintvos - 3
         /// </summary>
         private Tweet[] _mockData = {
-                                        new Tweet { Id = "1", Text = "testing #avatar #3d" },
+                                        new Tweet { Id = "1", Text = "testing #avatar #movie" },
                                         new Tweet { Id = "2", Text = "bad weather #rain" },
-                                        new Tweet { Id = "3", Text = "#avatar #3d" },
-                                        new Tweet { Id = "4", Text = "market #snp500 #sky #3d" },
-                                        new Tweet { Id = "5", Text = "testing #avatar #3d #android" },
-                                        new Tweet { Id = "6", Text = "#music2023 #tea #tea" },
-                                        new Tweet { Id = "7", Text = "testing #avatar #3d" },
-                                        new Tweet { Id = "8", Text = "movie #3d #tea #air session" },
-                                        new Tweet { Id = "9", Text = "testing #avatar #3d" },
-                                        new Tweet { Id = "10", Text = "#newyear #tea #tea" },
-                                        new Tweet { Id = "11", Text = "#topPop #3d #xamarintvos" },
-                                        new Tweet { Id = "12", Text = "#rain #saveWater" },
-                                        new Tweet { Id = "13", Text = "#anime #sky #3d #android" },
-                                        new Tweet { Id = "14", Text = "testing #tea #avatar #3d" },
-                                        new Tweet { Id = "15", Text = "#newyear #air #xamarintvos" },
-                                        new Tweet { Id = "16", Text = "#sky #sky #rain   #android" },
-                                        new Tweet { Id = "17", Text = "#coffee #electro" },
-                                        new Tweet { Id = "18", Text = "#electro #newyear #newyear" },
-                                        new Tweet { Id = "19", Text = "#topPop" },
-                                        new Tweet { Id = "20", Text = "#newyear #xamarintvos" },
-                                        new Tweet { Id = "21", Text = "#anime #tea" },
-                                        new Tweet { Id = "22", Text = "#electro #tea" },
-                                        new Tweet { Id = "23", Text = "#newyear #rain" },
-                                        new Tweet { Id = "24", Text = "#air " },
+                                        new Tweet { Id = "3", Text = "watch #avatar #movie" },
+                                        new Tweet { Id = "4", Text = "market #snp500 #sky #movie" },
+                                        new Tweet { Id = "5", Text = "testing #avatar #movie #android" },
+                                        new Tweet { Id = "6", Text = "Lorem ipsum dolor sit amet, #music2023 #tea #tea" },
+                                        new Tweet { Id = "7", Text = "testing #avatar #movie" },
+                                        new Tweet { Id = "8", Text = "Lorem ipsum dolor sit amet, #movie #tea #air session" },
+                                        new Tweet { Id = "9", Text = "testing #avatar #movie" },
+                                        new Tweet { Id = "10", Text = "Lorem ipsum dolor sit amet, #newyear #tea #tea" },
+                                        new Tweet { Id = "11", Text = "Lorem ipsum dolor sit amet, #topPop #movie #xamarintvos" },
+                                        new Tweet { Id = "12", Text = "Lorem ipsum dolor sit amet, #rain #saveWater" },
+                                        new Tweet { Id = "13", Text = "Lorem ipsum dolor sit amet, #anime #sky #movie #android" },
+                                        new Tweet { Id = "14", Text = "Lorem ipsum dolor sit amet, testing #tea #avatar #movie" },
+                                        new Tweet { Id = "15", Text = "Lorem ipsum dolor sit amet, #newyear #air #xamarintvos" },
+                                        new Tweet { Id = "16", Text = "Lorem ipsum dolor sit amet, #sky #sky #rain   #android" },
+                                        new Tweet { Id = "17", Text = "Lorem ipsum dolor sit amet, #coffee #electro" },
+                                        new Tweet { Id = "18", Text = "Lorem ipsum dolor sit amet, #electro #newyear #newyear" },
+                                        new Tweet { Id = "19", Text = "Lorem ipsum dolor sit amet, #topPop" },
+                                        new Tweet { Id = "20", Text = "Lorem ipsum dolor sit amet, #newyear #xamarintvos" },
+                                        new Tweet { Id = "21", Text = "Lorem ipsum dolor sit amet, #anime #tea" },
+                                        new Tweet { Id = "22", Text = "Lorem ipsum dolor sit amet, #electro #tea" },
+                                        new Tweet { Id = "23", Text = "Lorem ipsum dolor sit amet, #newyear #rain" },
+                                        new Tweet { Id = "24", Text = "Lorem ipsum dolor sit amet, #air " },
                                     };
+
+        private string[] _top10Tags = new[]
+                                          {
+                                              "#movie", "#avatar", "#sky", "#newyear", "#tea", "#rain", "#xamarintvos",
+                                              "#android", "#air", "#electro"
+                                          };
+
         [Fact]
         public void Valid_TwitterCount()
         {
             var streamWorkerMock = this.GetSystemUnderTest().GetRequiredService<TwitterStreamWorkerMock>();
             streamWorkerMock.WatchTwitterStream(CancellationToken.None);
-            // TODO test for streamWorkerMock.PrintData content
+            streamWorkerMock
+                .PrintData
+                .First(tags => tags.count == (ulong)this._mockData.Length)
+                .topHashTags
+                .Should()
+                .Contain(_top10Tags, "should contain 10 most frequent tags");
         }
 
 
