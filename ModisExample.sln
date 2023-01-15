@@ -11,7 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Modis.TwitterClient.Abstrac
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Modis.Twitter.Domain", "src\Modis.Twitter.Domain\Modis.Twitter.Domain.csproj", "{DDC9D22D-4B6F-41D9-BADE-67AB76B4E906}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modis.Twitter.Domain.Abstractions", "src\Modis.Twitter.Domain.Abstractions\Modis.Twitter.Domain.Abstractions.csproj", "{BA314846-A747-42AA-9A8B-E1D20009D0D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Modis.Twitter.Domain.Abstractions", "src\Modis.Twitter.Domain.Abstractions\Modis.Twitter.Domain.Abstractions.csproj", "{BA314846-A747-42AA-9A8B-E1D20009D0D2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{3D9A17E9-3F5C-4AF4-A8F7-BA2DCC073BD1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modis.Tests", "test\Modis.Tests\Modis.Tests.csproj", "{B940D718-7158-4C43-BEA9-950AC42273F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,9 +43,16 @@ Global
 		{BA314846-A747-42AA-9A8B-E1D20009D0D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA314846-A747-42AA-9A8B-E1D20009D0D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA314846-A747-42AA-9A8B-E1D20009D0D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B940D718-7158-4C43-BEA9-950AC42273F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B940D718-7158-4C43-BEA9-950AC42273F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B940D718-7158-4C43-BEA9-950AC42273F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B940D718-7158-4C43-BEA9-950AC42273F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B940D718-7158-4C43-BEA9-950AC42273F9} = {3D9A17E9-3F5C-4AF4-A8F7-BA2DCC073BD1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {784EA541-214E-4C0C-A031-8587AC0F9307}

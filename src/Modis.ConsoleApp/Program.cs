@@ -25,9 +25,7 @@ public class Program
             .ConfigureAppConfiguration((hostingContext, configuration) =>
                 {
                     configuration.Sources.Clear();
-
                     configuration
-                        
                         .AddEnvironmentVariables() // add Env variables provider, in order to override Twitter credentials configuration for production
                         .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
                 })
