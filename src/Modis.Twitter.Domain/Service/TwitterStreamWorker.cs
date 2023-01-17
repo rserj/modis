@@ -1,6 +1,7 @@
-﻿namespace Modis.Twitter.Domain.Service;
+﻿using System.Runtime.CompilerServices;
+[assembly: InternalsVisibleTo("Modis.Tests")]
 
-using System.Collections.Concurrent;
+namespace Modis.Twitter.Domain.Service;
 
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -9,7 +10,7 @@ using Modis.Twitter.Domain.Abstractions;
 using Modis.Twitter.Domain.Utils;
 using Modis.TwitterClient.Abstractions;
 
-public class TwitterStreamWorker: ITwitterStreamWorker
+internal class TwitterStreamWorker: ITwitterStreamWorker
 {
     private const int TrackMaxTags = 10;
 

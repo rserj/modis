@@ -1,13 +1,12 @@
 ﻿namespace Modis.Tests.Mocks;
 
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
 using Modis.Twitter.Domain.Service;
 using Modis.TwitterClient.Abstractions;
 
-public class TwitterStreamWorkerMock : TwitterStreamWorker
+internal class TwitterStreamWorkerMock : TwitterStreamWorker
 {
     public List<(int count, List<string> topHashTags)> PrintData { get; } = new();
 
